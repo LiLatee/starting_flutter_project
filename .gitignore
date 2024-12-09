@@ -110,3 +110,8 @@ app.*.map.json
 !.idea/codeStyles/
 !.idea/dictionaries/
 !.idea/runConfigurations/
+
+# Secrets
+secrets/keys
+secrets/encryption_password.txt
+/lib/core/envs/env.g.dart

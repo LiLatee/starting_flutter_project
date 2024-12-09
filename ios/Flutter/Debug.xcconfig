@@ -1,1 +1,5 @@
+#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
 #include "Generated.xcconfig"
+
+// Config for storing .env inside native iOS code, so it can be used inside Info.plist.
+#include "tmp.xcconfig"

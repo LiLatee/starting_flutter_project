@@ -8,15 +8,18 @@ environment:
 
 dependencies:
   bloc: ^8.1.4
+  envied: ^1.0.0
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.6
+  flutter_config_plus: ^1.1.1
   flutter_localizations:
     sdk: flutter
   intl: ^0.19.0
 
 dev_dependencies:
   bloc_test: ^9.1.7
+  envied_generator: ^1.0.0
   flutter_test:
     sdk: flutter
   mocktail: ^1.0.4

@@ -32,3 +32,7 @@ Runner/GeneratedPluginRegistrant.*
 !default.mode2v3
 !default.pbxuser
 !default.perspectivev3
+
+# These two files are used for storing .env inside native iOS code, so it can be used inside Info.plist.
+/Flutter/tmp.xcconfig
+/.envfile

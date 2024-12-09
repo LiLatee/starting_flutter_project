@@ -28,6 +28,28 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+//////////// ! Environment variables
+def Properties flutterEnvProduction = new Properties()
+def envFileProduction = file("../../secrets/keys/production.env")
+if (envFileProduction.exists()) {
+    flutterEnvProduction.load(new FileInputStream(envFileProduction))
+}
+
+def Properties flutterEnvDevelopment = new Properties()
+def envFileDevelopment = file("../../secrets/keys/development.env")
+if (envFileDevelopment.exists()) {
+    flutterEnvDevelopment.load(new FileInputStream(envFileDevelopment))
+}
+
+def Properties flutterEnvStaging = new Properties()
+def envFileStaging = file("../../secrets/keys/staging.env")
+if (envFileStaging.exists()) {
+    flutterEnvStaging.load(new FileInputStream(envFileStaging))
+}
+// Example of usage 
+// flutterEnvStaging.getProperty('facebook_client_token')
+//////////// !
+
 android {
     namespace "com.lilatee.startingproject.starting_flutter_project"
     compileSdkVersion flutter.compileSdkVersion

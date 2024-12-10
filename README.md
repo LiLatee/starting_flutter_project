@@ -5,9 +5,11 @@
 [![License: MIT][license_badge]][license_link]
 
 Template for starting Flutter app based on [Very Good CLI][very_good_cli_link] with some additional stuff.
+The goal of that is to use [Very Good CLI][very_good_cli_link] and then apply belowe instructions in order to add some additional stuff. In the future the idea is to create an automatic script/package for that.
 
 ---
 
+- [Version manager](#version-manager)
 - [Secrets 🤫](#secrets---)
   * [Preperations](#preperations)
     + [Add new rules to gitignore in the main directory of a project](#add-new-rules-to-gitignore-in-the-main-directory-of-a-project)
@@ -22,7 +24,14 @@ Template for starting Flutter app based on [Very Good CLI][very_good_cli_link] w
   * [Adding Supported Locales](#adding-supported-locales)
   * [Adding Translations](#adding-translations)
   * [Generating Translations](#generating-translations)
-- [TODO LIST](#todo-list)
+
+# Version manager
+This project uses [mise](https://mise.jdx.dev/) for managing version of Flutter and other required tools. [asdf](https://asdf-vm.com/) should also work fine.
+
+ `.tool-versions` file in root project directory defines Flutter version used for that project. Install [mise](https://mise.jdx.dev/) and type the following command to install that Flutter version.
+```bash
+mise install
+```
 
 # Secrets 🤫
 
@@ -335,18 +344,19 @@ Alternatively, run `flutter run` and code generation will take place automatical
 
 
 # TODO LIST
-- localization
+- ✅ localization
 - ✅ secrets
+- golden tests
 - upload dsym files
-- releasing on Firebasea
-- releasing on TestFlighta
-- releasing on Google Internal Testy
+- releasing on Firebase
+- releasing on TestFlight
+- releasing on Google Internal Test
 - ✅ flavors production, development, staging
 - workflow tests, analyzer
 - git hooks
 - linter rules
 - launch.json
-- mise configuration
+- ✅ mise configuration
 - dependabot
 - CI info about missing translations
 

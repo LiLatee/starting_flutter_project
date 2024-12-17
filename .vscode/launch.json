@@ -39,6 +39,20 @@
         "--target",
         "lib/main_production.dart"
       ]
-    }
+    },
+    {
+      "name": "Goldens",
+      "request": "launch",
+      "type": "dart",
+      "codeLens": {
+        "for": [
+          "run-test",
+          "run-test-file"
+        ]
+      },
+      "args": [
+        "--update-goldens"
+      ]
+    },
   ]
 }

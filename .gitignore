@@ -115,3 +115,6 @@ app.*.map.json
 secrets/keys
 secrets/encryption_password.txt
 /lib/core/envs/env.g.dart
+
+# Golden tests failures
+**/failures/**.png

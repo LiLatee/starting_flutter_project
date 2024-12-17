@@ -6,6 +6,7 @@ import 'package:mocktail/mocktail.dart';
 
 import 'package:starting_flutter_project/counter/counter.dart';
 
+import '../../helpers/golden_test_runner.dart';
 import '../../helpers/helpers.dart';
 
 class MockCounterCubit extends MockCubit<int> implements CounterCubit {}
@@ -64,5 +65,10 @@ void main() {
       await tester.tap(find.byIcon(Icons.remove));
       verify(() => counterCubit.decrement()).called(1);
     });
+
+    runGoldenTest(
+      '$CounterPage',
+      builder: (context) => const CounterPage(),
+    );
   });
 }

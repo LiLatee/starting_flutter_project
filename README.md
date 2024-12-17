@@ -17,6 +17,7 @@ The goal of that is to use [Very Good CLI][very_good_cli_link] and then apply be
   * [Files](#files)
   * [iOS - Info.plist secrets](#ios---infoplist-secrets)
   * [Android - build.gradle and AndroidManifest secrets](#android---buildgradle-and-androidmanifest-secrets)
+- [Golden/Screenshot Tests 🧈 🖼️](#golden-screenshot-tests-------)
 - [Getting Started 🚀](#getting-started---)
 - [Running Tests 🧪](#running-tests---)
 - [Working with Translations 🌐](#working-with-translations---)
@@ -24,6 +25,7 @@ The goal of that is to use [Very Good CLI][very_good_cli_link] and then apply be
   * [Adding Supported Locales](#adding-supported-locales)
   * [Adding Translations](#adding-translations)
   * [Generating Translations](#generating-translations)
+- [TODO LIST](#todo-list)
 
 # Version manager
 This project uses [mise](https://mise.jdx.dev/) for managing version of Flutter and other required tools. [asdf](https://asdf-vm.com/) should also work fine.
@@ -186,6 +188,50 @@ android {
 }
 ```
 
+# Golden/Screenshot Tests 🧈 🖼️
+Project uses [golden_test](https://pub.dev/packages/golden_test) package for golden test and [golden_toolkig](https://pub.dev/packages/golden_toolkit) for fixing fonts and icons on screenshots.
+
+1. Add package to `dev_dependencies`. For now there is an opened PR that adds support for Routers.
+
+```yaml
+dev_dependencies:
+  golden_test:
+    git: 
+      url: https://github.com/dmkasperski/golden_test
+      ref: add_support_for_router
+```
+
+2. Copy `test/helpers/golden_test_runner.dart` file. It's a function that is used to run every golden test. It handles default state of every golden test.
+
+3. Copy `test/flutter_test_config.dart` file. It has some basic stuff that is used in every test. Here we use [golden_toolkit](https://pub.dev/packages/golden_toolkit) package for fixing fonts and icons on screenshots.
+
+4. Add configuration in `.vscode/launch.json` to run test from test files directly. 
+
+```yaml
+{
+  "configurations": [
+    {
+      "name": "Goldens",
+      "request": "launch",
+      "type": "dart",
+      "codeLens": {
+        "for": [
+          "run-test",
+          "run-test-file"
+        ]
+      },
+      "args": [
+        "--update-goldens"
+      ]
+    },
+  ]
+}
+
+```
+In VS Code you should see `Goldens` button above `runGoldenTest` function.
+![goldens_button](readme_resources/goldens_button.png)
+
+
 # Getting Started 🚀
 
 This project contains 3 flavors:
@@ -346,7 +392,7 @@ Alternatively, run `flutter run` and code generation will take place automatical
 # TODO LIST
 - ✅ localization
 - ✅ secrets
-- golden tests
+- ✅ golden tests - change local path to remote after merging to master
 - upload dsym files
 - releasing on Firebase
 - releasing on TestFlight

@@ -10,14 +10,15 @@ The goal of that is to use [Very Good CLI][very_good_cli_link] and then apply be
 ---
 
 - [Version manager](#version-manager)
-- [Secrets 🤫](#secrets---)
+- [Secrets](#secrets)
   * [Preperations](#preperations)
     + [Add new rules to gitignore in the main directory of a project](#add-new-rules-to-gitignore-in-the-main-directory-of-a-project)
   * [Variables](#variables)
   * [Files](#files)
   * [iOS - Info.plist secrets](#ios---infoplist-secrets)
   * [Android - build.gradle and AndroidManifest secrets](#android---buildgradle-and-androidmanifest-secrets)
-- [Golden/Screenshot Tests 🧈 🖼️](#golden-screenshot-tests-------)
+- [Golden - Screenshot Tests](#golden---screenshot-tests)
+- [Linter](#linter)
 - [Getting Started 🚀](#getting-started---)
 - [Running Tests 🧪](#running-tests---)
 - [Working with Translations 🌐](#working-with-translations---)
@@ -35,7 +36,7 @@ This project uses [mise](https://mise.jdx.dev/) for managing version of Flutter 
 mise install
 ```
 
-# Secrets 🤫
+# Secrets
 
 ## Preperations
 
@@ -188,7 +189,7 @@ android {
 }
 ```
 
-# Golden/Screenshot Tests 🧈 🖼️
+# Golden - Screenshot Tests
 Project uses [golden_test](https://pub.dev/packages/golden_test) package for golden test and [golden_toolkig](https://pub.dev/packages/golden_toolkit) for fixing fonts and icons on screenshots.
 
 1. Add package to `dev_dependencies`. For now there is an opened PR that adds support for Routers.
@@ -231,6 +232,15 @@ dev_dependencies:
 In VS Code you should see `Goldens` button above `runGoldenTest` function.
 ![goldens_button](readme_resources/goldens_button.png)
 
+# Linter
+Project uses mostly [leancode_lint](https://pub.dev/packages/leancode_lint) with some minor changes.
+
+Add a required packages
+```bash
+dart pub add leancode_lint custom_lint --dev
+```
+
+and create `analysis_options.yaml` file in the root of the project
 
 # Getting Started 🚀
 
@@ -400,7 +410,7 @@ Alternatively, run `flutter run` and code generation will take place automatical
 - ✅ flavors production, development, staging
 - workflow tests, analyzer
 - git hooks
-- linter rules
+- ✅ linter rules
 - launch.json
 - ✅ mise configuration
 - dependabot

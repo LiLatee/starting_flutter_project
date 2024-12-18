@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:starting_flutter_project/core/envs/env.dart';
 import 'package:starting_flutter_project/counter/counter.dart';
 import 'package:starting_flutter_project/l10n/l10n.dart';
 
@@ -23,7 +24,13 @@ class CounterView extends StatelessWidget {
     final l10n = context.l10n;
     return Scaffold(
       appBar: AppBar(title: Text(l10n.counterAppBarTitle)),
-      body: const Center(child: CounterText()),
+      body: Center(
+          child: Column(
+        children: [
+          Text('Env.key: ${Env.key}'),
+          const CounterText(),
+        ],
+      )),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,

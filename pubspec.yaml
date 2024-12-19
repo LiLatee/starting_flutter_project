@@ -30,7 +30,7 @@ dev_dependencies:
     git: 
       url: https://github.com/dmkasperski/golden_test
       ref: add_support_for_router
-  leancode_lint: ^14.3.0
+  leancode_lint: ^14.4.0
   mocktail: ^1.0.4
   very_good_analysis: ^6.0.0
 

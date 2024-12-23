@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+printStyle="\e[33;1m%s\e[0m\n"
+
+echo 'Running dart analysis'
+./tools/dart_analysis.sh
+exit_code=$?
+echo 'Finished running dart analysis'
+if [ "$exit_code" -ne 0 ]; then
+  printf $printStyle 'Running dart analysis failed'
+  exit "$exit_code"
+fi
+
+echo 'Running flutter tests'
+flutter test test
+exit_code=$?
+echo 'Finished running flutter tests'
+exit $exit_code

@@ -1,11 +1,14 @@
 #!/bin/bash
 
-# Makes all paths relative to project root so it can be run from anywhere
+# Navigates to the root directory of the project.
+# In that case to the directory with the name of the Flutter project.
+# So it can be run from anywhere.
 parent_path=$(
   cd "$(dirname "${BASH_SOURCE[0]}")" || exit
   pwd -P
 )
-cd "$parent_path/../.." || exit
+cd "$parent_path/.." || exit
+
 
 # Set the name of the output encrypted archive file
 output_archive="secrets/encrypted_secrets.tar.gz.enc"

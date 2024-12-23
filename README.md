@@ -19,6 +19,10 @@ The goal of that is to use [Very Good CLI][very_good_cli_link] and then apply be
   * [Android - build.gradle and AndroidManifest secrets](#android---buildgradle-and-androidmanifest-secrets)
 - [Golden - Screenshot Tests](#golden---screenshot-tests)
 - [Linter](#linter)
+- [Githooks](#githooks)
+    + [pre-commit](#pre-commit)
+    + [pre-push](#pre-push)
+- [Helpful scripts](#helpful-scripts)
 - [Getting Started 🚀](#getting-started---)
 - [Running Tests 🧪](#running-tests---)
 - [Working with Translations 🌐](#working-with-translations---)
@@ -249,6 +253,36 @@ dart pub add leancode_lint custom_lint --dev
 
 and create `analysis_options.yaml` file in the root of the project
 
+# Githooks
+
+In order to enable githooks in the following configuration remember to run
+
+```shell
+git config core.hooksPath .githooks 
+```
+
+### pre-commit
+Uses `dart format` command to format all files to a proper format with a line length equals to 120. It uses rules defined in `analysis_options.yaml` file.
+
+File is present in `.githooks/pre-commit`.
+
+### pre-push
+Runs:
+- `./tools/dart_analysis.sh` script,
+- `flutter test test` command to run tests inside `test` directory;
+
+`dart_analysis.sh` script uses [dart_code_linter](https://pub.dev/packages/dart_code_linter) for finding for unused parts of the codes and [custom_lint](https://pub.dev/packages/custom_lint) for running custom lints so please remmeber to add both of these packages:
+
+```shell
+dart pub add --dev dart_code_linter custom_lint
+```
+
+Files are present in `.githooks/pre-push` and `tools/dart_analysis.sh`.
+
+# Helpful scripts
+
+- `tools/fix_flutter_environment.sh` - Script for removing everything (I hope so) related to Flutter. Run it if something does not work and maybe it will fix it.
+
 # Getting Started 🚀
 
 This project contains 3 flavors:
@@ -416,11 +450,11 @@ Alternatively, run `flutter run` and code generation will take place automatical
 - releasing on Google Internal Test
 - ✅ flavors production, development, staging
 - workflow tests, analyzer
-- git hooks
+- ✅ git hooks
 - ✅ linter rules
-- launch.json
+- ✅ launch.json
 - ✅ mise configuration
-- dependabot
+- ✅ dependabot
 - CI info about missing translations
 
 [coverage_badge]: coverage_badge.svg

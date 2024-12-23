@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+LINE_LENGTH=120
+
+# If there is a merge operation in the progress then ignore pre-commit action.
+isMerge=$(git rev-parse -q --verify MERGE_HEAD)
+if [ -n "$isMerge" ]; then
+  exit
+fi
+
+# Regexp for grep to only choose some file extensions for formatting.
+extensionsToInclude="\.dart$"
+echo "Pre-commit: formatting changed files"
+
+# Format staged files only.
+filesToFormat=()
+for file in $(git diff --cached --name-only --diff-filter=ACMR | grep $extensionsToInclude); do
+  # Exclude generated and proto directories and .g.dart and .freezed.dart files.
+  if [[
+         ! $file =~ lib/(generated|proto).*\.dart  
+      && ! $file =~ .*\.freezed\.dart 
+      && ! $file =~ .*\.g\.dart
+      ]]; then
+    filesToFormat+=("$file")
+  fi
+done
+
+for file in "${filesToFormat[@]}"; do
+  echo "Formatting $file"
+done
+
+if (( ${#filesToFormat[@]} )); then
+  dart format -l $LINE_LENGTH "${filesToFormat[@]}"
+  git add "${filesToFormat[@]}"
+fi

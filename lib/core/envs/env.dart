@@ -8,6 +8,6 @@ part 'env.g.dart';
 /// development -> 'secrets/keys/development.env'
 @Envied(path: 'secrets/keys/development.env')
 abstract class Env {
-  @EnviedField(varName: 'EXAMPLE_KEY', obfuscate: true)
+  @EnviedField(defaultValue: 'example_key_development', varName: 'EXAMPLE_KEY', obfuscate: true)
   static final String key = _Env.key;
 }

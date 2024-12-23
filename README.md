@@ -23,6 +23,8 @@ The goal of that is to use [Very Good CLI][very_good_cli_link] and then apply be
     + [pre-commit](#pre-commit)
     + [pre-push](#pre-push)
 - [Helpful scripts](#helpful-scripts)
+- [Github Workflows](#github-worflows)
+  * [Test and Analyze workflow](#test-and-analyze-workflow)
 - [Getting Started 🚀](#getting-started---)
 - [Running Tests 🧪](#running-tests---)
 - [Working with Translations 🌐](#working-with-translations---)
@@ -283,6 +285,29 @@ Files are present in `.githooks/pre-push` and `tools/dart_analysis.sh`.
 
 - `tools/fix_flutter_environment.sh` - Script for removing everything (I hope so) related to Flutter. Run it if something does not work and maybe it will fix it.
 
+# Github Workflows
+
+`.github/workflows` stores common versions of tools for every workflow in order to be consistent with the version of tools across different workflows.
+
+In order to run tests on CI we have to provide a placeholder values for our environments variables. For that case please remember to fill `defaultValue` parameter when adding a new field in `/lib/core/envs/env.dart` file.
+
+e.g
+```dart
+  @EnviedField(defaultValue: 'example_key_development', varName: 'EXAMPLE_KEY', obfuscate: true)
+  static final String key = _Env.key;
+```
+
+## Test and Analyze workflow
+File: `.github/workflows`
+
+Responsible for running `./tools/dart_analysis.sh` script and `flutter test` command.
+
+For now [golden_test](https://pub.dev/packages/golden_test) package does not support CI tests by handling problems with differnt rendering depending on system. So here you have to use the same system that you use locally. If it will be a big issue you should consider using [alchemist](https://pub.dev/packages/alchemist) which solves that problem.
+
+If any test fails then you can find `goldens` artifact on Github which stores information what exactly tests failed and what are the differences.
+
+![goldens_artifact](readme_resources/goldens_artifact.png)
+
 # Getting Started 🚀
 
 This project contains 3 flavors:
@@ -449,7 +474,7 @@ Alternatively, run `flutter run` and code generation will take place automatical
 - releasing on TestFlight
 - releasing on Google Internal Test
 - ✅ flavors production, development, staging
-- workflow tests, analyzer
+- ✅ workflow tests, analyzer
 - ✅ git hooks
 - ✅ linter rules
 - ✅ launch.json

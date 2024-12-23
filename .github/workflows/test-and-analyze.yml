@@ -1,0 +1,66 @@
+name: Test and Analyze
+run-name: Test and Analyze
+
+concurrency:
+  # Distinct different workflows (github.workflow) and PRs (github.event.pull_request.number)
+  # or branch name (github.ref) if workflow is not running in PR.
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  tests:
+    timeout-minutes: 10
+    name: Test and Analyze
+    # For now https://pub.dev/packages/golden_test package does not support CI tests 
+    # by handling problems with differnt rendering depending on system.
+    # So here you have to use the same system that you use locally.
+    # If it will be a big issue you should consider using https://pub.dev/packages/alchemist
+    # which solves that problem.
+    runs-on: macos-14
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Load common environment variables
+        run: |
+          source .github/workflows/common.env
+          echo "JAVA_VERSION=$JAVA_VERSION" >> $GITHUB_ENV
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version-file: pubspec.yaml
+          cache: true
+
+      - name: Get flutter packages and generate Environment Variables using https://pub.dev/packages/envied package
+        run: |
+          flutter pub get
+          dart run build_runner build --delete-conflicting-outputs
+
+      - name: Run dart static analysis
+        if: always() # So all check are run even if one of them fails so we can see all errors in a single run.
+        run: ./tools/dart_analysis.sh
+
+      - name: Run flutter test
+        if: always() # So all check are run even if one of them fails so we can see all errors in a single run.
+        # if: github.ref == 'refs/heads/master' # Uncomment if you want to run it just on "master" branch.
+        run: |
+          flutter test test -r expanded
+      
+      - name: Upload goldens results if tests failed
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: goldens
+          path: |
+            test/**/failures/*.png

@@ -15,7 +15,9 @@ The goal of that is to use [Very Good CLI][very_good_cli_link] and then apply be
     + [Add new rules to gitignore in the main directory of a project](#add-new-rules-to-gitignore-in-the-main-directory-of-a-project)
   * [Variables](#variables)
   * [Files](#files)
-  * [iOS - Info.plist secrets](#ios---infoplist-secrets)
+  * [iOS](#ios)
+    + [Info.plist](#infoplist)
+    + [AppDelegate.swift](#appdelegateswift)
   * [Android - build.gradle and AndroidManifest secrets](#android---buildgradle-and-androidmanifest-secrets)
 - [Golden - Screenshot Tests](#golden---screenshot-tests)
 - [Linter](#linter)
@@ -23,7 +25,7 @@ The goal of that is to use [Very Good CLI][very_good_cli_link] and then apply be
     + [pre-commit](#pre-commit)
     + [pre-push](#pre-push)
 - [Helpful scripts](#helpful-scripts)
-- [Github Workflows](#github-worflows)
+- [Github Workflows](#github-workflows)
   * [Test and Analyze workflow](#test-and-analyze-workflow)
 - [Getting Started 🚀](#getting-started---)
 - [Running Tests 🧪](#running-tests---)
@@ -88,7 +90,9 @@ dart run build_runner build --delete-conflicting-outputs
 You can generate a new password using that command `openssl rand -base64 16`.
 - `tools/secrets/purge_secrets.sh` deletes all secrets defined in `secrets/secret_files_list.txt`.
 
-## iOS - Info.plist secrets
+## iOS
+
+### Info.plist
 
 In order to make your environment variables available in `ios/Runner/Info.plist` file (e.g. when adding integration with Facebook by adding `facebook_client_token` secret) you need to reproduce below steps from screenshots for EVERY environment `staging`, `production`, `development`.
 
@@ -128,6 +132,14 @@ Now you should be able to use your variables in `ios/Runner.Info.plist` like tha
 ```xml
 <key>FacebookAppID</key>
 <string>$(facebook_app_id)</string>
+```
+
+### AppDelegate.swift
+Sometimes you need to access some secrets inside `AppDelegate.swift` file e.g. to set up [google_maps_flutter](https://pub.dev/packages/google_maps_flutter) package. Firstly the secret has to be defined in `Info.plist` file as shown in the previous section. Then you can extract it in this way:
+
+```swift
+    let myCustomKey: String = Bundle.main.object(forInfoDictionaryKey:"FacebookAppID") as? String ?? ""
+
 ```
 
 ## Android - build.gradle and AndroidManifest secrets
@@ -471,6 +483,8 @@ Alternatively, run `flutter run` and code generation will take place automatical
 - ✅ golden tests - change local path to remote after merging to master
 - upload dsym files
 - releasing on Firebase
+- Firebase crashylitcs
+- Firebase analytics - logScreenViews
 - releasing on TestFlight
 - releasing on Google Internal Test
 - ✅ flavors production, development, staging

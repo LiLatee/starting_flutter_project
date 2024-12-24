@@ -18,7 +18,9 @@ The goal of that is to use [Very Good CLI][very_good_cli_link] and then apply be
   * [iOS](#ios)
     + [Info.plist](#infoplist)
     + [AppDelegate.swift](#appdelegateswift)
-  * [Android - build.gradle and AndroidManifest secrets](#android---buildgradle-and-androidmanifest-secrets)
+  * [Android](#android)
+    + [build.gradle and AndroidManifest](#buildgradle-and-androidmanifest)
+    + [MainActivity.kt](#mainactivitykt)
 - [Golden - Screenshot Tests](#golden---screenshot-tests)
 - [Linter](#linter)
 - [Githooks](#githooks)
@@ -142,7 +144,10 @@ Sometimes you need to access some secrets inside `AppDelegate.swift` file e.g. t
 
 ```
 
-## Android - build.gradle and AndroidManifest secrets
+## Android
+
+### build.gradle and AndroidManifest
+
 In order to make your environment variables available in `android/app/build.gradle` file (e.g. when adding integration with Facebook by adding `facebook_client_token` secret) paste that code inside `android/app/build.gradle`
 
 ```gradle
@@ -203,6 +208,36 @@ android {
                     facebookContentProvider: "com.facebook.app.FacebookContentProvider${flutterEnvStaging.getProperty('facebook_app_id')}",
                     ]
             }
+    }
+}
+```
+### MainActivity.kt
+In order to get access to secret inside `android/app/src/main/kotlin/com/lilatee/startingproject/starting/flutter/project/MainActivity.kt` file you need to add `resValue` property inside `productFlavors` in `android/app/build.gradle` file.
+
+```gradle
+    productFlavors { 
+        staging {
+            dimension "default"
+            resValue "string", "example_key", flutterEnvStaging.getProperty('EXAMPLE_KEY')
+            applicationIdSuffix ".stg"
+            manifestPlaceholders = [appName: "[STG] Starting Flutter Project"]
+        }
+    }
+```
+
+Then you can use that value inside `MainActivity.kt` like that:
+
+```kotlin
+package com.lilatee.startingproject.starting_flutter_project
+
+import android.os.Bundle
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity : FlutterActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val exampleKey: String = getString(R.string.example_key)
     }
 }
 ```

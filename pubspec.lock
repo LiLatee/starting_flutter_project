@@ -350,10 +350,11 @@ packages:
   flutter_config_plus:
     dependency: "direct main"
     description:
-      name: flutter_config_plus
-      sha256: aaacb29778db1f66245a1f1bf5aeb3e934d1cb707eee080c342edab8f06333bf
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "18cb62632d60bc2910370c8dec84ee69863908a2"
+      url: "https://github.com/LiLatee/flutter_config_plus/"
+    source: git
     version: "1.1.1"
   flutter_localizations:
     dependency: "direct main"

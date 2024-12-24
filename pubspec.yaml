@@ -13,7 +13,11 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.6
-  flutter_config_plus: ^1.1.1
+  # PR is waiting for merge in order to support Gradle 8+
+  # https://github.com/stevennguyenn/flutter_config_plus/pull/4
+  flutter_config_plus:
+    git:
+      url: https://github.com/LiLatee/flutter_config_plus/
   flutter_localizations:
     sdk: flutter
   go_router: ^14.6.2

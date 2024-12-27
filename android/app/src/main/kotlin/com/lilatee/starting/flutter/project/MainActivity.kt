@@ -1,4 +1,4 @@
-package com.lilatee.startingproject.starting_flutter_project
+package com.lilatee.starting_flutter_project
 
 import io.flutter.embedding.android.FlutterActivity
 

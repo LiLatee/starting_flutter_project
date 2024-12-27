@@ -89,11 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.lilatee.startingproject.starting-flutter-project" "\0"
+            VALUE "CompanyName", "com.lilatee.starting-flutter-project" "\0"
             VALUE "FileDescription", "starting_flutter_project" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "starting_flutter_project" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 com.lilatee.startingproject.starting-flutter-project. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 com.lilatee.starting-flutter-project. All rights reserved." "\0"
             VALUE "OriginalFilename", "starting_flutter_project.exe" "\0"
             VALUE "ProductName", "Starting Flutter Project" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

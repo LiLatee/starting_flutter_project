@@ -228,7 +228,7 @@ In order to get access to secret inside `android/app/src/main/kotlin/com/lilatee
 Then you can use that value inside `MainActivity.kt` like that:
 
 ```kotlin
-package com.lilatee.startingproject.starting_flutter_project
+package com.lilatee.starting_flutter_project
 
 import android.os.Bundle
 import io.flutter.embedding.android.FlutterActivity

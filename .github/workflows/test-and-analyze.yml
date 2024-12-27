@@ -46,6 +46,12 @@ jobs:
         run: |
           flutter pub get
           dart run build_runner build --delete-conflicting-outputs
+      
+      - name: Decrypt secrets
+        env:
+          SECRETS_PASSWORD: ${{ secrets.SECRETS_PASSWORD }}
+        run: |
+            ./tools/secrets/decrypt_secrets.sh
 
       - name: Run dart static analysis
         if: always() # So all check are run even if one of them fails so we can see all errors in a single run.
@@ -64,3 +70,7 @@ jobs:
           name: goldens
           path: |
             test/**/failures/*.png
+
+      - name: Purge secrets
+        run: |
+            ./tools/secrets/purge_secrets.sh

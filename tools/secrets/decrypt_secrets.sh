@@ -22,9 +22,14 @@ if [ ! -e "$password_file" ]; then
   touch "$password_file"
 fi
 
+# Check if the [SECRETS_PASSWORD] environment variable is present.
+# It is used in CI/CD.
+if [ -n "$SECRETS_PASSWORD" ]; then
+  echo "$SECRETS_PASSWORD" >"$password_file"
 # Check if the password file is empty
-if [ -s "$password_file" ]; then
+elif [ -s "$password_file" ]; then
   echo "Password file is not empty. Continuing with decryption."
+# Otherwise ask user to provide password.
 else
   echo "Error: Password file is empty. Please provide the password in $password_file."
   read -s -p "Paste the password and press Enter: " password

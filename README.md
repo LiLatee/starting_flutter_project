@@ -60,7 +60,7 @@ In order to build the app using Xcode you need to set entry point of the app, be
 ```
 # Secrets
 secrets/keys
-secrets/encryption_password.txt
+tools/secrets/encryption_password.txt
 /lib/core/envs/env.g.dart
 ```
 ## Variables
@@ -361,6 +361,11 @@ File: `.github/workflows`
 
 Responsible for running `./tools/dart_analysis.sh` script and `flutter test` command.
 
+It uses `SECRETS_PASSWORD` environment variable in GitHub for decrypting secrets.
+In GitHub go to `Settings->Secrets and Variables->Actions`
+then create a `New repository secret` named `SECRETS_PASSWORD` that holds password for decrypting secrets.
+It's the same password that `tools/secrets/encryption_password.txt` stores.
+
 For now [golden_test](https://pub.dev/packages/golden_test) package does not support CI tests by handling problems with differnt rendering depending on system. So here you have to use the same system that you use locally. If it will be a big issue you should consider using [alchemist](https://pub.dev/packages/alchemist) which solves that problem.
 
 If any test fails then you can find `goldens` artifact on Github which stores information what exactly tests failed and what are the differences.
@@ -461,8 +466,25 @@ void main() {
     firebaseOptions: DefaultFirebaseOptions.currentPlatform,
   );
 }
-
 ```
+
+At the end add new rules to `.gitignore`
+```shell
+# Firebase secrets
+# These are not really crucial secrets, but always better to hide.
+firebase.json
+android/app/src/production/google-services.json
+android/app/src/staging/google-services.json
+android/app/src/development/google-services.json
+ios/flavors/production/GoogleService-Info.plist
+ios/flavors/staging/GoogleService-Info.plist
+ios/flavors/development/GoogleService-Info.plist
+ios/Runner/GoogleService-Info.plist
+lib/firebase_options_prod.dart
+lib/firebase_options_stg.dart
+lib/firebase_options_dev.dart
+```
+the same files should be added to `/tools/secrets/secret_files_list.txt` file.
 
 # Getting Started 🚀
 

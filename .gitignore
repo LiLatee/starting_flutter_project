@@ -113,8 +113,22 @@ app.*.map.json
 
 # Secrets
 secrets/keys
-secrets/encryption_password.txt
+tools/secrets/encryption_password.txt
 /lib/core/envs/env.g.dart
 
 # Golden tests failures
 **/failures/**.png
+
+# Firebase secrets
+# These are not really crucial secrets, but always better to hide.
+firebase.json
+android/app/src/production/google-services.json
+android/app/src/staging/google-services.json
+android/app/src/development/google-services.json
+ios/flavors/production/GoogleService-Info.plist
+ios/flavors/staging/GoogleService-Info.plist
+ios/flavors/development/GoogleService-Info.plist
+ios/Runner/GoogleService-Info.plist
+lib/firebase_options_prod.dart
+lib/firebase_options_stg.dart
+lib/firebase_options_dev.dart

@@ -45,6 +45,11 @@ This project uses [mise](https://mise.jdx.dev/) for managing version of Flutter 
 ```bash
 mise install
 ```
+# Build the app using Xcode
+
+In order to build the app using Xcode you need to set entry point of the app, because the default one is `lib/main.dart`, but we have `main_production.dart`, `main_staging.dart` and ` main_development.dart`.
+
+![ios_set_entry_point](readme_resources/ios_set_entry_point.png)
 
 # Secrets
 
@@ -86,11 +91,18 @@ dart run build_runner build --delete-conflicting-outputs
 
 - All secret files and directoriee are stored in `secrets/encrypted_secrets.tar.gz.enc`.
 - All secret files and directoriee are defined in `secrets/secret_files_list.txt`.
-- `tools/secrets/encrypt_secrets.sh` script takes all the files defined in `secrets/secret_files_list.txt`, encrypts them and zips into `secrets/encrypted_secrets.tar.gz.enc`.
-- `tools/secrets/decrypt_secrets.sh` script unzips all the files defined in `secrets/secret_files_list.txt` and places them in appropriate places.
-- In order to use both above scripts you need to provide password in `secrets/encryption_password.txt`. In order to get password contact: marcin.hradowicz@gmail.com
+e.g.
+```
+android/app/keystore
+android/app/key.properties
+secrets/keys
+firebase.json
+```
+- `tools/secrets/encrypt_secrets.sh` script takes all the files defined in `tools/secrets/secret_files_list.txt`, encrypts them and zips into `secrets/encrypted_secrets.tar.gz.enc`.
+- `tools/secrets/decrypt_secrets.sh` script unzips all the files defined in `tools/secrets/secret_files_list.txt` and places them in appropriate places.
+- In order to use both above scripts you need to provide password in `tools/secrets/encryption_password.txt`. In order to get password contact: marcin.hradowicz@gmail.com
 You can generate a new password using that command `openssl rand -base64 16`.
-- `tools/secrets/purge_secrets.sh` deletes all secrets defined in `secrets/secret_files_list.txt`.
+- `tools/secrets/purge_secrets.sh` deletes all secrets defined in `tools/secrets/secret_files_list.txt`.
 
 ## iOS
 
@@ -354,6 +366,103 @@ For now [golden_test](https://pub.dev/packages/golden_test) package does not sup
 If any test fails then you can find `goldens` artifact on Github which stores information what exactly tests failed and what are the differences.
 
 ![goldens_artifact](readme_resources/goldens_artifact.png)
+
+# Firebase
+Check out official documentation
+https://firebase.google.com/docs/flutter/setup
+
+Install firebase tool.
+```shell
+curl -sL https://firebase.tools | bash
+```
+
+Login to Firebase.
+```shell
+firebase login
+```
+
+Install the FlutterFire CL
+```shell
+dart pub global activate flutterfire_cli
+```
+
+Open [Firebase Console](https://console.firebase.google.com/) and create separate projects for every environment you need. e.g.
+- starting-flutter-project-prod
+- starting-flutter-project-stg
+- starting-flutter-project-dev
+
+[Firebase's documentation](https://firebase.google.com/docs/projects/dev-workflows/general-best-practices) strongly encourages MULTIPLE times to create separate Firebase projects for different environments e.g. production and staging. The main reason is that thanks to that you can separate resources (like database or authentication) between production and staging apps.
+
+From my experience what I recall that really can be useful. I remember working on a project that used one Firebase project for both production and staging environments. We were using Firebase authentication on social media. When I logged in using a Google account on the staging app and then on the production app I was not able to create an account because my email was already used in the app, because both the production and staging app were using the same resources.
+
+Then open `./tools/flutterfire_configure_with_flavors.sh` file and modify `projectName`, `iosPackageName`, and `androidPackageName` accordingly to your needs.
+
+Next, inside your Flutter project run
+```shell
+./tools/flutterfire_configure_with_flavors.sh prod 
+./tools/flutterfire_configure_with_flavors.sh stg
+./tools/flutterfire_configure_with_flavors.sh dev  
+```
+When prompted, select `Build configuration`:
+
+```shell
+You have to choose a configuration type. Either build configuration (most likely choice) or a target set up. ›                    
+❯ Build configuration
+  Target   
+```
+Then, choose the Debug-<flavor> build configuration.
+
+It creates`GoogleServive-Info.plist` files for iOS,
+![firebase_ios_flavors](readme_resources/firebase_ios_flavors.png)
+ 
+`google-services.json` files for Android,
+![firebase_android_flavors](readme_resources/firebase_android_flavors.png)
+ 
+ and also `firebase_options_*.dart` files.
+![firebase_options_flavors](readme_resources/firebase_options_flavors.png)
+
+
+Add [firebase_core](https://pub.dev/packages/firebase_core) package
+```shell
+flutter pub add firebase_core
+```
+
+Modify `/lib/bootstrap.dart` file to handle different flavors:
+
+```dart
+Future<void> bootstrap(
+  FutureOr<Widget> Function() builder, {
+  required FirebaseOptions firebaseOptions,
+}) async {
+  FlutterError.onError = (details) {
+    log(details.exceptionAsString(), stackTrace: details.stack);
+  };
+
+  Bloc.observer = const AppBlocObserver();
+
+  // Add cross-flavor configuration here
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: firebaseOptions);
+
+  runApp(await builder());
+}
+
+```
+and use new parameter inside
+`/lib/main_production.dart`, `/lib/main_staging.dart` and `/lib/main_development.dart` files.
+```dart
+import 'package:starting_flutter_project/app/app.dart';
+import 'package:starting_flutter_project/bootstrap.dart';
+import 'package:starting_flutter_project/firebase_options_prod.dart';
+
+void main() {
+  bootstrap(
+    () => const App(),
+    firebaseOptions: DefaultFirebaseOptions.currentPlatform,
+  );
+}
+
+```
 
 # Getting Started 🚀
 

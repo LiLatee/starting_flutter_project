@@ -1,7 +1,16 @@
 #!/bin/bash
 
+# Navigates to the root directory of the project.
+# In that case to the directory with the name of the Flutter project.
+# So it can be run from anywhere.
+parent_path=$(
+  cd "$(dirname "${BASH_SOURCE[0]}")" || exit
+  pwd -P
+)
+cd "$parent_path/../.." || exit
+
 # Set the path for the file containing the list of files and directories to delete
-secret_files_list_file="secrets/secret_files_list.txt"
+secret_files_list_file="tools/secrets/secret_files_list.txt"
 
 # Check if the file containing the list of files and directories to delete exists
 if [ ! -e "$secret_files_list_file" ]; then

@@ -7,13 +7,13 @@ parent_path=$(
   cd "$(dirname "${BASH_SOURCE[0]}")" || exit
   pwd -P
 )
-cd "$parent_path/.." || exit
+cd "$parent_path/../.." || exit
 
 # Set the name of the encrypted archive file
-encrypted_archive="secrets/encrypted_secrets.tar.gz.enc"
+encrypted_archive="tools/secrets/encrypted_secrets.tar.gz.enc"
 
 # Set the name of the file containing the decryption password
-password_file="secrets/encryption_password.txt"
+password_file="tools/secrets/encryption_password.txt"
 
 # Check if the password file exists
 if [ ! -e "$password_file" ]; then

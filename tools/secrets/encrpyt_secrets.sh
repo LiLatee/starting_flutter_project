@@ -7,21 +7,19 @@ parent_path=$(
   cd "$(dirname "${BASH_SOURCE[0]}")" || exit
   pwd -P
 )
-cd "$parent_path/.." || exit
-
+cd "$parent_path/../.." || exit
 
 # Set the name of the output encrypted archive file
-output_archive="secrets/encrypted_secrets.tar.gz.enc"
+output_archive="tools/secrets/encrypted_secrets.tar.gz.enc"
 
 # Set the path for the file containing the list of files and directories to encrypt
-secret_files_list_file="secrets/secret_files_list.txt"
+secret_files_list_file="tools/secrets/secret_files_list.txt"
 
 # Set the name of the file containing the encryption password
-password_file="secrets/encryption_password.txt"
+password_file="tools/secrets/encryption_password.txt"
 
 # Set the path for the version file
-version_file="secrets/secrets_version.txt"
-
+version_file="tools/secrets/secrets_version.txt"
 # Check if the password file exists
 if [ ! -e "$password_file" ]; then
   echo "Warning: The file $password_file is not present."

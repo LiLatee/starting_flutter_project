@@ -486,6 +486,59 @@ lib/firebase_options_dev.dart
 ```
 the same files should be added to `/tools/secrets/secret_files_list.txt` file.
 
+# Signing the app
+
+## Android
+Follow official documentation and generate Upload Key - https://docs.flutter.dev/deployment/android#signing-the-app
+
+Then create `android/key.properties` file and fill the required data.
+```properties
+storePassword=<password-from-previous-step>
+keyPassword=<password-from-previous-step>
+keyAlias=upload
+storeFile=<keystore-file-location>
+```
+
+and use its values inside `android/app/build.gradle`. Firstly extract values from `android/key.properties`
+
+```gradle
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+```
+
+then use them here:
+```gradle
+android {
+    signingConfigs {
+        if (System.getenv("ANDROID_KEYSTORE_PATH")) {
+            release {
+                storeFile file(System.getenv("ANDROID_KEYSTORE_PATH"))
+                keyAlias System.getenv("ANDROID_KEYSTORE_ALIAS")
+                keyPassword System.getenv("ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD")
+                storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
+            }
+        } else {
+            release {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+                storePassword keystoreProperties['storePassword']
+            }
+        }
+    }
+}
+```
+
+Now you can create build release version of the app:
+```shell
+flutter build appbundle --release --flavor production -t lib/main_production.dart
+flutter build apk --release --flavor production -t lib/main_production.dart
+```
+
+
 # Getting Started 🚀
 
 This project contains 3 flavors:

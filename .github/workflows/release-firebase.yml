@@ -1,0 +1,64 @@
+name: Build & upload to Firebase App Distribution 
+run-name: Build & upload to Firebase App Distribution 
+
+concurrency:
+  # Distinct different workflows (github.workflow) and PRs (github.event.pull_request.number)
+  # or branch name (github.ref) if workflow is not running in PR.
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+  
+on:
+    workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Load common environment variables
+      run: |
+        source .github/workflows/common.env
+        echo "JAVA_VERSION=$JAVA_VERSION" >> $GITHUB_ENV
+        echo "FLUTTER_VERSION=$FLUTTER_VERSION" >> $GITHUB_ENV
+        echo "FASTLANE_VERSION=$FASTLANE_VERSION" >> $GITHUB_ENV
+        echo "RUBY_VERSION=$RUBY_VERSION" >> $GITHUB_ENV
+
+    - name: Decrypt secrets
+      env:
+        SECRETS_PASSWORD: ${{ secrets.SECRETS_PASSWORD }}
+      run: |
+            ./tools/secrets/decrypt_secrets.sh
+            
+    #  Cache saves only if a whole workflow was successful.
+    - name: Cache Tools
+      id: cache-tools
+      uses: actions/cache@v4
+      with:
+        path: |
+            /home/runner/.local/share/mise/
+        key: ${{ runner.os }}-cache-tools-flutter${{ env.FLUTTER_VERSION }}-ruby${{ env.RUBY_VERSION }}-java${{ env.JAVA_VERSION }}
+
+    - name: Install mise
+      run: |
+        curl https://mise.run | sh
+
+    - name: Install Tools
+      if: steps.cache-tools.outputs.cache-hit != 'true'
+      run: |
+        mise install
+        mise exec -- gem install fastlane -v ${{ env.FASTLANE_VERSION }}
+
+    - name: Get flutter packages and generate Environment Variables using https://pub.dev/packages/envied package
+      run: |
+        mise exec -- flutter pub get
+        mise exec -- dart run build_runner build --delete-conflicting-outputs
+
+    - name: Release App to Firebase App Distribution
+      run: |
+        cd android
+        BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+        CURRENT_DATETIME=$(date +'%d:%m:%Y %H:%M')
+        VERSION_NAME="$BRANCH_NAME $CURRENT_DATETIME"
+        mise exec -- fastlane android upload_to_firebase --env prod version_name:$VERSION_NAME

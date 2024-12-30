@@ -10,6 +10,7 @@ The goal of that is to use [Very Good CLI][very_good_cli_link] and then apply be
 ---
 
 - [Version manager](#version-manager)
+- [Build the app using Xcode](#build-the-app-using-xcode)
 - [Secrets](#secrets)
   * [Preperations](#preperations)
     + [Add new rules to gitignore in the main directory of a project](#add-new-rules-to-gitignore-in-the-main-directory-of-a-project)
@@ -29,6 +30,11 @@ The goal of that is to use [Very Good CLI][very_good_cli_link] and then apply be
 - [Helpful scripts](#helpful-scripts)
 - [Github Workflows](#github-workflows)
   * [Test and Analyze workflow](#test-and-analyze-workflow)
+- [Firebase](#firebase)
+  * [App Distribution](#app-distribution)
+    + [Using Fastlane](#using-fastlane)
+- [Signing the app](#signing-the-app)
+  * [Android](#android-1)
 - [Getting Started 🚀](#getting-started---)
 - [Running Tests 🧪](#running-tests---)
 - [Working with Translations 🌐](#working-with-translations---)
@@ -346,7 +352,7 @@ Files are present in `.githooks/pre-push` and `tools/dart_analysis.sh`.
 
 # Github Workflows
 
-`.github/workflows` stores common versions of tools for every workflow in order to be consistent with the version of tools across different workflows.
+`.github/workflows/common.env` stores common versions of tools for every workflow in order to be consistent with the version of tools across different workflows.
 
 In order to run tests on CI we have to provide a placeholder values for our environments variables. For that case please remember to fill `defaultValue` parameter when adding a new field in `/lib/core/envs/env.dart` file.
 
@@ -386,7 +392,7 @@ Login to Firebase.
 firebase login
 ```
 
-Install the FlutterFire CL
+Install the FlutterFire CLI
 ```shell
 dart pub global activate flutterfire_cli
 ```
@@ -485,6 +491,154 @@ lib/firebase_options_stg.dart
 lib/firebase_options_dev.dart
 ```
 the same files should be added to `/tools/secrets/secret_files_list.txt` file.
+
+## App Distribution
+
+Add new tool in `.tool-versions` file
+```shell
+# Java version compatible with Gradle 8.3
+java openjdk-17
+```
+
+### Using Fastlane
+[Firebase official documentation](https://firebase.google.com/docs/app-distribution/android/distribute-fastlane)
+
+1. Open Firebase -> App Distribution and press `Get Started`.
+2. Go to `Testers and Groups` and create a group named `Testers`. It's then used in `release-firebase.yml`, more accuretly inside `android/Fastfile`.
+
+```ruby
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID"],
+      service_credentials_file: "app/firebase_service_credentials-prod.json",
+      android_artifact_type: "APK",
+      android_artifact_path: ENV["FIREBASE_SERVICE_CREDENTIALS_FILE_PATH"],
+      groups: "testers", # <====== HERE
+    )
+```
+
+
+Add new tools in `.tool-versions` file
+```shell
+# For Fastlane
+ruby 3.4.1
+```
+
+Then call 
+```shell
+mise install
+ruby --version
+```
+in order to install `ruby`.
+
+
+Then after making sure you are using the right version of `ruby` install `fastlane`
+```shell
+gem install fastlane -v 2.226.0 
+```
+
+Go to `android` directory and run
+```shell
+fastlane init
+```
+
+Add plugin for uploading build to Firebase App Distribution
+```shell
+fastlane add_plugin firebase_app_distribution
+```
+
+and install `dotenv`
+```shell
+gem install dotenv
+```
+
+Copy `android/fastlane/Fastfile`. That file uses environment variables defined in the same directory in files:
+- `env.prod`
+- `env.stg`
+- `env.dev`
+
+Example `env.prod` file. Remember to adjust it for every flavor.
+```
+FLAVOR=production
+FIREBASE_APP_ID=fake_firebase_app_id
+FIREBASE_SERVICE_CREDENTIALS_FILE_PATH=app/firebase_service_credentials-prod.json
+ANDROID_ARTIFACT_PATH=../build/app/outputs/flutter-apk/app-production-release.apk
+MAIN_FILE_PATH="../../lib/main_production.dart"
+```
+
+Instruction on how to generate `SERVICE_CREDENTIALS_FILE`
+
+https://firebase.google.com/docs/app-distribution/android/distribute-fastlane#service-acc-fastlane
+
+
+Now we need to handle new secrets. Add these paths to `.gitgnore`:
+```
+android/fastlane/.env.prod
+android/fastlane/.env.stg
+android/fastlane/.env.dev
+android/app/firebase_service_credentials-prod.json
+```
+
+and remove that path `**/android/**/gradle-wrapper.jar`. It is needed to make gradle available on CI. Thanks to that we use exactly the same gradle on CI and locally. `gradle-wrapper.jar` from `android/.gitignore` must be deleted as well.
+
+Add these paths to `tools/secrets/secret_files_list.txt`
+```
+android/fastlane/.env.prod
+android/fastlane/.env.stg
+android/fastlane/.env.dev
+android/app/firebase_service_credentials-prod.json
+```
+
+and run `./tools/secrets/encrypt_secrets.sh` in order to update secrets.
+
+In `android/fastlane/Fasfile` file we set up `versionName` and `versionNumber` of built app. This change requires changes inside `android/app/build.gradle` file:
+
+```gradle
+    defaultConfig {
+        // ...
+        // Fetch versionCode ane versionName from properties given while calling `gradlew` e.g.
+        // "gradlew assembleproductionRelease -p . -PversionCode=4 -PversionName=3.0.0"
+        // If they do not exist then use values from `/android/local.properties` file.
+        versionCode project.hasProperty('versionCode') ? project.property('versionCode') as int : flutterVersionCode.toInteger()
+        versionName project.hasProperty('versionName') ? project.property('versionName') as String : flutterVersionName
+    }
+```
+
+`flutterVersionCode` and `flutterVersionName` should be already defined, but in case here there are:
+```gradle
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+```
+
+
+Copy `.github/workflows/release-firebase.yml` file with workflow. This file uses new tools on CI, so we need to provide also a new records inside `.github/workflows/common.env`:
+```
+JAVA_VERSION=17.0.2
+FLUTTER_VERSION=3.24.4-stable
+RUBY_VERSION=3.4.1
+FASTLANE_VERSION=2.226.0
+```
+
+Finally we can run fastlane command and you can choose which environment should be used.
+ ```shell
+ fastlane android upload_to_firebase --env prod
+ ```
+
+ And because `.github/workflows/release-firebase.yml` uses
+ ```yaml
+on:
+    workflow_dispatch:
+ ```
+ we can run that manually in GitHub by following these steps:
+ https://docs.github.com/en/actions/managing-workflow-runs-and-deployments/managing-workflow-runs/manually-running-a-workflow
+
+![github_workflow_manual_trigger](readme_resources/github_workflow_manual_trigger.png)
 
 # Signing the app
 
@@ -714,6 +868,8 @@ Alternatively, run `flutter run` and code generation will take place automatical
 - ✅ mise configuration
 - ✅ dependabot
 - CI info about missing translations
+- caching in workflows
+- secrets fix empty line in list of secrets
 
 [coverage_badge]: coverage_badge.svg
 [flutter_localizations_link]: https://api.flutter.dev/flutter/flutter_localizations/flutter_localizations-library.html

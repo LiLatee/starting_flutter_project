@@ -78,8 +78,11 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        // Fetch versionCode ane versionName from properties given while calling `gradlew` e.g.
+        // "gradlew assembleproductionRelease -p . -PversionCode=4 -PversionName=3.0.0"
+        // If they do not exist then use values from `/android/local.properties` file.
+        versionCode project.hasProperty('versionCode') ? project.property('versionCode') as int : flutterVersionCode.toInteger()
+        versionName project.hasProperty('versionName') ? project.property('versionName') as String : flutterVersionName
     }
 
     signingConfigs {

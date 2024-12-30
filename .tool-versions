@@ -2,3 +2,5 @@ flutter 3.24.4-stable
 
 # Java version compatible with Gradle 8.3
 java openjdk-17
+
+ruby 3.4.1

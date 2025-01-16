@@ -51,6 +51,31 @@ This project uses [mise](https://mise.jdx.dev/) for managing version of Flutter 
 ```bash
 mise install
 ```
+## Java version
+Your Java version must be compatible with Gradle. Gradle version is defined inside `android/gradle/wrapper/gradle-wrapper.properties` under `distributionUrl` param.
+
+Here you can check compatibility matrix for Gradle and Java https://docs.gradle.org/current/userguide/compatibility.html#java
+
+In order to be sure that Flutter uses correct Java version it's good to set it manually. Firstly run:
+
+```bash
+mise where java
+```
+
+copy the output and use that Java path to assign in to our Flutter version:
+
+```bash
+flutter config --jdk-dir /Users/marcinhradowicz/.local/share/mise/installs/java/openjdk-21.0.2
+```
+
+Run
+```bash
+flutter doctor --verbose
+```
+
+and verify if Flutter and Java version are correct.
+![flutter_doctor](readme_resources/flutter_doctor.png)
+
 # Build the app using Xcode
 
 In order to build the app using Xcode you need to set entry point of the app, because the default one is `lib/main.dart`, but we have `main_production.dart`, `main_staging.dart` and ` main_development.dart`.
@@ -421,7 +446,7 @@ You have to choose a configuration type. Either build configuration (most likely
 ❯ Build configuration
   Target   
 ```
-Then, choose the Debug-<flavor> build configuration.
+Then, choose the Debug-[flavor] build configuration.
 
 It creates`GoogleServive-Info.plist` files for iOS,
 ![firebase_ios_flavors](readme_resources/firebase_ios_flavors.png)

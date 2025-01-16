@@ -1,6 +1,7 @@
 flutter 3.24.4-stable
 
-# Java version compatible with Gradle 8.3
-java openjdk-17
+# Java version compatible with Gradle 8.3 that is defined inside "android/gradle/wrapper/gradle-wrapper.properties" under `distributionUrl`
+# https://docs.gradle.org/current/userguide/compatibility.html#java_runtime
+java openjdk-21
 
 ruby 3.4.1

@@ -70,6 +70,43 @@ platform :android do
       groups: "testers",
     )
   end
+
+  lane :upload_to_playstore_internal do |options|
+    # build_android_app action uses default entry point `lib/main.dart`.
+    # Project uses different one depending on flavor.
+    # So here we copy appropriate entry point to the default path.
+    FileUtils.cp(ENV["MAIN_FILE_PATH"], "../../lib/main.dart")
+
+    # Set default value if version_name is not provided. e.g.
+    # fastlane android upload_to_firebase --env prod version_name:"version name" 
+    version_name = options.fetch(:version_name, '1.0.0')
+
+
+    previous_build_number = google_play_track_version_codes(
+      track: "internal",
+    )[0]
+
+    current_build_number = previous_build_number + 1
+
+    build_android_app(
+      task: "bundle",
+      flavor: ENV["FLAVOR"],
+      build_type: "Release",
+      properties: { 
+        'versionCode' => current_build_number, 
+        'versionName' => version_name,
+      }
+    )
+
+    upload_to_play_store(
+      track: "internal",
+      # Only releases with status draft may be created on draft app.
+      # My app on Google Play Console is still a draft one.
+      release_status: "draft",
+      version_name: version_name,
+      aab: ENV["ANDROID_BUNDLE_PATH"],
+    )
+  end
 end
 
 

@@ -403,6 +403,31 @@ If any test fails then you can find `goldens` artifact on Github which stores in
 
 ![goldens_artifact](readme_resources/goldens_artifact.png)
 
+## Release to Google Play Console
+Firstly please remember to build APK and manually upload it to Google Play Console, otherwise `fastlane supply init` command will throw an error.
+
+Next install fastlane which process is described [here](#using-fastlane).
+
+Then follow instruction provided by fastlane: https://docs.fastlane.tools/getting-started/android/setup/#setting-up-supply
+
+And then this one: https://docs.fastlane.tools/getting-started/android/release-deployment/
+
+In short you should have:
+- `android/fastlane/Appfile` with `json_key_file` and `package_name`;
+- copy `android/fastlane/Fastfile` or only `upload_to_playstore_internal` lane from there;
+- create `android/fastlane/.env.prod` and add there 
+```
+FLAVOR=production
+ANDROID_BUNDLE_PATH=../build/app/outputs/bundle/productionRelease/app-production-release.aab
+MAIN_FILE_PATH="../../lib/main_production.dart"
+```
+Now you can run command `fastlane android upload_to_playstore_internal --env prod` inside `android` directory which produces AAB file, uploads it to Google Play and creates a Draft release on Internal testing track.
+
+### Store Listing management
+You can also manage your store listing resources through Fastlane by providing these files:
+![google_store_listing_files](readme_resources/google_store_listing_files.png)
+![google_store_listing](readme_resources/google_store_listing.png)
+
 # Firebase
 Check out official documentation
 https://firebase.google.com/docs/flutter/setup
@@ -895,6 +920,9 @@ Alternatively, run `flutter run` and code generation will take place automatical
 - CI info about missing translations
 - caching in workflows
 - secrets fix empty line in list of secrets
+- upload app metadata to playstore https://docs.fastlane.tools/getting-started/android/release-deployment/
+- remove GoogleService-Info.plist from ios/Runner and use the one in ios/flavor/[flavor]
+- info.plist translations
 
 [coverage_badge]: coverage_badge.svg
 [flutter_localizations_link]: https://api.flutter.dev/flutter/flutter_localizations/flutter_localizations-library.html

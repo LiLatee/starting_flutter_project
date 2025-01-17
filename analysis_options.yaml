@@ -35,4 +35,7 @@ linter:
     - cancel_subscriptions
     - close_sinks
     - prefer_const_literals_to_create_immutables
+    - unawaited_futures
+    - sort_constructors_first
+    - avoid_print
     - avoid_types_on_closure_parameters: false

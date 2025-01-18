@@ -1,7 +1,7 @@
 {
-    "@@locale": "pl",
-    "counterAppBarTitle": "Licznik",
-    "@counterAppBarTitle": {
-        "description": "Tekst wyświetlany w AppBarze ekranu CounterPage."
-    }
+  "@@locale": "pl",
+  "@counterAppBarTitle": {
+    "description": "Tekst wyświetlany w AppBarze ekranu CounterPage."
+  },
+  "counterAppBarTitle": "Licznik"
 }

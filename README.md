@@ -417,6 +417,10 @@ If any test fails then you can find `goldens` artifact on Github which stores in
 
 ![goldens_artifact](readme_resources/goldens_artifact.png)
 
+### Missing translations script
+`.github/workflows/test-and-analyze.yml` workflow also checks for missing translations using `tools/check-missing-translations/check-missing-translations.dart` script and `tools/check-missing-translations/pubspec.yaml` file.
+
+
 ## Release to Firebase App Distribution
 File:`.github/workflows/release-firebase.yml`
 It uses
@@ -459,6 +463,7 @@ git push origin 1.0.4
 ```
 
 ![google_play_console_new_release](readme_resources/google_play_console_new_release.png)
+
 
 ### Store Listing management
 You can also manage your store listing resources through Fastlane by providing these files:
@@ -944,7 +949,7 @@ Alternatively, run `flutter run` and code generation will take place automatical
 - ✅ launch.json
 - ✅ mise configuration
 - ✅ dependabot
-- CI info about missing translations
+- ✅ CI info about missing translations
 - ✅ caching in workflows
 - ✅ secrets fix empty line in list of secrets
 - ✅ upload app metadata to playstore https://docs.fastlane.tools/getting-started/android/release-deployment/

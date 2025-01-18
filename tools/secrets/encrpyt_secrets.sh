@@ -36,6 +36,8 @@ else
   echo "$password" > "$password_file"
 fi
 
+secret_files_list_file="tools/secrets/secret_files_list.txt"
+
 # Check if the file containing the list of files and directories to encrypt exists
 if [ ! -e "$secret_files_list_file" ]; then
   echo "Error: The file $secret_files_list_file is not present."
@@ -45,35 +47,36 @@ fi
 
 # Read the list of files and directories to encrypt from the file into an array
 files_to_encrypt=()
-while IFS= read -r line; do
+while IFS= read -r line || [[ -n "$line" ]]; do
   files_to_encrypt+=("$line")
 done < "$secret_files_list_file"
 
 
-# Checks if all secret files exists
+# # Checks if all secret files exists
 for file_path in "${files_to_encrypt[@]}"; do
+echo $file_path
     if [ ! -e "$file_path" ]; then
         echo "File or directory '$file_path' does not exist. Run decrypt first and make your changes."
         exit 1
     fi
 done
 
-# Create a tar archive of all files with the original directory structure, excluding .DS_Store files
-tar czf - --files-from="$secret_files_list_file" --directory="$(pwd)" --exclude='.DS_Store' | openssl enc -aes-256-cbc -salt -pbkdf2 -out "$output_archive" -pass "file:$password_file"
+# # Create a tar archive of all files with the original directory structure, excluding .DS_Store files
+# tar czf - --files-from="$secret_files_list_file" --directory="$(pwd)" --exclude='.DS_Store' | openssl enc -aes-256-cbc -salt -pbkdf2 -out "$output_archive" -pass "file:$password_file"
 
-# Increment the version in secrets_version.txt
-if [ ! -e "$version_file" ]; then
-  echo "0" > "$version_file"
-else
-  current_version=$(head -n 1 "$version_file")
-  echo $((current_version + 1)) > "$version_file"
-fi
+# # Increment the version in secrets_version.txt
+# if [ ! -e "$version_file" ]; then
+#   echo "0" > "$version_file"
+# else
+#   current_version=$(head -n 1 "$version_file")
+#   echo $((current_version + 1)) > "$version_file"
+# fi
 
-# Clear previous content of secrets_version.txt
-echo -e -n "$(<"$version_file")\n" > "$version_file"
+# # Clear previous content of secrets_version.txt
+# echo -e -n "$(<"$version_file")\n" > "$version_file"
 
-# Add the date and current Git user name to secrets_version.txt
-echo -e "Date of Change: $(date '+%d.%m.%Y %H:%M:%S')" >> "$version_file"
-echo "Current Git User: $(git config user.name)" >> "$version_file"
+# # Add the date and current Git user name to secrets_version.txt
+# echo -e "Date of Change: $(date '+%d.%m.%Y %H:%M:%S')" >> "$version_file"
+# echo "Current Git User: $(git config user.name)" >> "$version_file"
 
-echo "Encryption complete. Encrypted archive saved to $output_archive"
+# echo "Encryption complete. Encrypted archive saved to $output_archive"

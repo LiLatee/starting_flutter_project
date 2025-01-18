@@ -20,7 +20,7 @@ if [ ! -e "$secret_files_list_file" ]; then
 fi
 
 # Read the list of files and directories to delete from the file using a while loop
-while IFS= read -r path_to_delete; do
+while IFS= read -r path_to_delete || [[ -n "$path_to_delete" ]]; do
   echo $path_to_delete
   if [ -e "$path_to_delete" ]; then
     # Use find to delete both files and directories

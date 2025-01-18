@@ -932,11 +932,11 @@ Alternatively, run `flutter run` and code generation will take place automatical
 - ✅ secrets
 - ✅ golden tests - change local path to remote after merging to master
 - upload dsym files
-- releasing on Firebase
+- ✅ releasing on Firebase
 - Firebase crashylitcs
 - Firebase analytics - logScreenViews
 - releasing on TestFlight
-- releasing on Google Internal Test
+- ✅ releasing on Google Internal Test
 - ✅ flavors production, development, staging
 - ✅ workflow tests, analyzer
 - ✅ git hooks
@@ -946,10 +946,9 @@ Alternatively, run `flutter run` and code generation will take place automatical
 - ✅ dependabot
 - CI info about missing translations
 - ✅ caching in workflows
-- secrets fix empty line in list of secrets
+- ✅ secrets fix empty line in list of secrets
 - ✅ upload app metadata to playstore https://docs.fastlane.tools/getting-started/android/release-deployment/
 - ✅ remove GoogleService-Info.plist from ios/Runner and use the one in ios/flavor/[flavor]
-- info.plist translations
 
 [coverage_badge]: coverage_badge.svg
 [flutter_localizations_link]: https://api.flutter.dev/flutter/flutter_localizations/flutter_localizations-library.html

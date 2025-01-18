@@ -9,7 +9,6 @@ The goal of that is to use [Very Good CLI][very_good_cli_link] and then apply be
 
 ---
 
-- [Starting Flutter Project](#starting-flutter-project)
 - [Version manager](#version-manager)
   * [Java version](#java-version)
 - [Build the app using Xcode](#build-the-app-using-xcode)
@@ -33,6 +32,7 @@ The goal of that is to use [Very Good CLI][very_good_cli_link] and then apply be
 - [Github Workflows](#github-workflows)
   * [Update Cache workflow](#update-cache-workflow)
   * [Test and Analyze workflow](#test-and-analyze-workflow)
+    + [Missing translations script](#missing-translations-script)
   * [Release to Firebase App Distribution](#release-to-firebase-app-distribution)
   * [Release to Google Play Console](#release-to-google-play-console)
     + [Store Listing management](#store-listing-management)

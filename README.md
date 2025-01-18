@@ -9,7 +9,9 @@ The goal of that is to use [Very Good CLI][very_good_cli_link] and then apply be
 
 ---
 
+- [Starting Flutter Project](#starting-flutter-project)
 - [Version manager](#version-manager)
+  * [Java version](#java-version)
 - [Build the app using Xcode](#build-the-app-using-xcode)
 - [Secrets](#secrets)
   * [Preperations](#preperations)
@@ -29,7 +31,11 @@ The goal of that is to use [Very Good CLI][very_good_cli_link] and then apply be
     + [pre-push](#pre-push)
 - [Helpful scripts](#helpful-scripts)
 - [Github Workflows](#github-workflows)
+  * [Update Cache workflow](#update-cache-workflow)
   * [Test and Analyze workflow](#test-and-analyze-workflow)
+  * [Release to Firebase App Distribution](#release-to-firebase-app-distribution)
+  * [Release to Google Play Console](#release-to-google-play-console)
+    + [Store Listing management](#store-listing-management)
 - [Firebase](#firebase)
   * [App Distribution](#app-distribution)
     + [Using Fastlane](#using-fastlane)
@@ -411,6 +417,54 @@ If any test fails then you can find `goldens` artifact on Github which stores in
 
 ![goldens_artifact](readme_resources/goldens_artifact.png)
 
+## Release to Firebase App Distribution
+File:`.github/workflows/release-firebase.yml`
+It uses
+ ```yaml
+on:
+    workflow_dispatch:
+ ```
+ so we can run that manually in GitHub by following these steps:
+ https://docs.github.com/en/actions/managing-workflow-runs-and-deployments/managing-workflow-runs/manually-running-a-workflow
+
+![github_workflow_manual_trigger](readme_resources/github_workflow_manual_trigger.png)
+
+## Release to Google Play Console
+File: `.github/workflows/release-stores.yml`
+
+Firstly please remember to build APK and manually upload it to Google Play Console, otherwise `fastlane supply init` command will throw an error.
+
+Next install fastlane which process is described [here](#using-fastlane).
+
+Then follow instruction provided by fastlane: https://docs.fastlane.tools/getting-started/android/setup/#setting-up-supply
+
+And then this one: https://docs.fastlane.tools/getting-started/android/release-deployment/
+
+In short you should have:
+- `android/fastlane/Appfile` with `json_key_file` and `package_name`;
+- copy `android/fastlane/Fastfile` or only `upload_to_playstore_internal` lane from there;
+- create `android/fastlane/.env.prod` and add there 
+```
+FLAVOR=production
+ANDROID_BUNDLE_PATH=../build/app/outputs/bundle/productionRelease/app-production-release.aab
+MAIN_FILE_PATH="../../lib/main_production.dart"
+```
+Now you can run command `fastlane android upload_to_playstore_internal --env prod` inside `android` directory which produces AAB file, uploads it to Google Play and creates a Draft release on Internal testing track. This command automatically fetches the newest version code from Google Console and builds the app with bumped version code.
+
+This command is used in `.github/workflows/release-stores.yml` workflow that fires on every tag push. So if tag is named "1.0.4" then on Google Play Console you will see Internal Draft Release named "1.0.4".
+
+```bash
+git tag -a 1.0.4 -m "1.0.4" 
+git push origin 1.0.4
+```
+
+![google_play_console_new_release](readme_resources/google_play_console_new_release.png)
+
+### Store Listing management
+You can also manage your store listing resources through Fastlane by providing these files:
+![google_store_listing_files](readme_resources/google_store_listing_files.png)
+![google_store_listing](readme_resources/google_store_listing.png)
+
 # Firebase
 Check out official documentation
 https://firebase.google.com/docs/flutter/setup
@@ -456,7 +510,7 @@ You have to choose a configuration type. Either build configuration (most likely
 ```
 Then, choose the Debug-[flavor] build configuration.
 
-It creates`GoogleServive-Info.plist` files for iOS,
+It creates `GoogleServive-Info.plist` files for iOS,
 ![firebase_ios_flavors](readme_resources/firebase_ios_flavors.png)
  
 `google-services.json` files for Android,
@@ -662,16 +716,6 @@ Finally we can run fastlane command and you can choose which environment should 
  ```shell
  fastlane android upload_to_firebase --env prod
  ```
-
- And because `.github/workflows/release-firebase.yml` uses
- ```yaml
-on:
-    workflow_dispatch:
- ```
- we can run that manually in GitHub by following these steps:
- https://docs.github.com/en/actions/managing-workflow-runs-and-deployments/managing-workflow-runs/manually-running-a-workflow
-
-![github_workflow_manual_trigger](readme_resources/github_workflow_manual_trigger.png)
 
 # Signing the app
 
@@ -901,10 +945,10 @@ Alternatively, run `flutter run` and code generation will take place automatical
 - ✅ mise configuration
 - ✅ dependabot
 - CI info about missing translations
-- caching in workflows
+- ✅ caching in workflows
 - secrets fix empty line in list of secrets
-- upload app metadata to playstore https://docs.fastlane.tools/getting-started/android/release-deployment/
-- remove GoogleService-Info.plist from ios/Runner and use the one in ios/flavor/[flavor]
+- ✅ upload app metadata to playstore https://docs.fastlane.tools/getting-started/android/release-deployment/
+- ✅ remove GoogleService-Info.plist from ios/Runner and use the one in ios/flavor/[flavor]
 - info.plist translations
 
 [coverage_badge]: coverage_badge.svg

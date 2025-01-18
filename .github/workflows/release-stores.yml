@@ -1,5 +1,5 @@
-name: Build & upload to Firebase App Distribution 
-run-name: Build & upload to Firebase App Distribution 
+name: Build & upload to Play Store and Apple Store
+run-name: Build & upload to Play Store and Apple Store
 
 concurrency:
   # Distinct different workflows (github.workflow) and PRs (github.event.pull_request.number)
@@ -10,11 +10,13 @@ concurrency:
   
 on:
     workflow_dispatch:
+    push:
+      tags:
+        - '**'
 
 jobs:
-  build:
+  android:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Load common environment variables
@@ -59,7 +61,5 @@ jobs:
     - name: Release App to Firebase App Distribution
       run: |
         cd android
-        BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-        CURRENT_DATETIME=$(date +'%d:%m:%Y %H:%M')
-        VERSION_NAME="$BRANCH_NAME $CURRENT_DATETIME"
-        mise exec -- fastlane android upload_to_firebase --env prod version_name:$VERSION_NAME
+        TAG_NAME=${{ github.ref_name }}
+        mise exec -- fastlane android upload_to_playstore_internal --env prod version_name:$TAG_NAME

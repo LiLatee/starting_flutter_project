@@ -387,8 +387,16 @@ e.g
   static final String key = _Env.key;
 ```
 
+## Update Cache workflow
+File: `.github/workflows/update-cache.yml`
+
+Access restrictions provide cache isolation and security by creating a logical boundary between different branches. For example, a cache created for the branch `feature-a` (with the base master) would not be accessible to a pull request for the branch `feature-b` (with the base master). But cache created for a default branch of a repository is accesible for every branch. So this workflow updates Cache that then can be accessible by other branches. 
+
+GitHub Documentation here: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/caching-dependencies-to-speed-up-workflows#restrictions-for-accessing-a-cache
+
+
 ## Test and Analyze workflow
-File: `.github/workflows`
+File: `.github/workflows/test-and-analyze.yml`
 
 Responsible for running `./tools/dart_analysis.sh` script and `flutter test` command.
 
@@ -895,6 +903,9 @@ Alternatively, run `flutter run` and code generation will take place automatical
 - CI info about missing translations
 - caching in workflows
 - secrets fix empty line in list of secrets
+- upload app metadata to playstore https://docs.fastlane.tools/getting-started/android/release-deployment/
+- remove GoogleService-Info.plist from ios/Runner and use the one in ios/flavor/[flavor]
+- info.plist translations
 
 [coverage_badge]: coverage_badge.svg
 [flutter_localizations_link]: https://api.flutter.dev/flutter/flutter_localizations/flutter_localizations-library.html

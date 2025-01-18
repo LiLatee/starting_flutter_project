@@ -1,0 +1,8 @@
+name: check_missing_translations
+
+environment:
+  sdk: ^3.5.0
+  flutter: 3.24.4
+
+dependencies:
+  args: ^2.4.0

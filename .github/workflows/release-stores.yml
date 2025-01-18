@@ -15,6 +15,40 @@ on:
         - '**'
 
 jobs:
+  check-missing-translations:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    #  Cache saves only if a whole workflow was successful.
+    - name: Cache Tools
+      id: cache-tools
+      uses: actions/cache@v4
+      with:
+        path: |
+            /home/runner/.local/share/mise/
+        key: ${{ runner.os }}-cache-tools-flutter${{ env.FLUTTER_VERSION }}-ruby${{ env.RUBY_VERSION }}-java${{ env.JAVA_VERSION }}-fastlane${{ env.FASTLANE_VERSION }}
+
+
+    - name: Install mise
+      run: |
+        curl https://mise.run | sh
+
+    - name: Install Tools
+      if: steps.cache-tools.outputs.cache-hit != 'true'
+      run: |
+        mise install
+        mise exec -- gem install fastlane -v ${{ env.FASTLANE_VERSION }}
+
+    - name: Get flutter packages and generate Environment Variables using https://pub.dev/packages/envied package
+      run: |
+        mise exec -- flutter pub get
+        mise exec -- dart run build_runner build --delete-conflicting-outputs
+
+    - name: Check missing translations
+      run: |
+        mise exec -- dart ./tools/check-missing-translations/check-missing-translations.dart           
+        
   android:
     runs-on: ubuntu-latest
     steps:

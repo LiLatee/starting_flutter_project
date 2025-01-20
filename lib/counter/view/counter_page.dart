@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:starting_flutter_project/core/crashlytics_error_reporter.dart';
 import 'package:starting_flutter_project/core/envs/env.dart';
 import 'package:starting_flutter_project/counter/counter.dart';
 import 'package:starting_flutter_project/l10n/l10n.dart';
@@ -30,6 +31,11 @@ class CounterView extends StatelessWidget {
           children: [
             Text('Env.key: ${Env.key}'),
             const CounterText(),
+            const SizedBox(height: 16),
+            const TextButton(
+              onPressed: testFirebaseCrashlytics,
+              child: Text('testFirebaseCrashlytics'),
+            )
           ],
         ),
       ),

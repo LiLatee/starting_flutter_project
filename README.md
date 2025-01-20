@@ -722,6 +722,61 @@ Finally we can run fastlane command and you can choose which environment should 
  fastlane android upload_to_firebase --env prod
  ```
 
+## Firebase Crashlytics
+This project uses [get_it](https://pub.dev/packages/get_it) for dependency injection.
+
+```bash
+flutter pub add firebase_crashlytics
+flutter pub add get_it
+```
+
+Copy `lib/core/crashlytics_error_reporter.dart` which handles error reporting in the app. It also contains `testFirebaseCrashlytics` function that can be called whenever you want in order to send different errors to Firebase and check if it works fine. Remember to test Android and iOS, because iOS needs special dSYM files to decode errors. This topic is covered in the next point.
+
+Create `lib/core/dependencies.dart` for managing dependencies with use of `get_it`.
+```dart
+import 'package:get_it/get_it.dart';
+import 'package:starting_flutter_project/core/crashlytics_error_reporter.dart';
+
+final GetIt sl = GetIt.instance;
+
+Future<void> setupDependencies() async {
+  final CrashlyticsErrorReporter crashlyticsErrorReporter = CrashlyticsErrorReporter();
+  await crashlyticsErrorReporter.initReporter();
+  sl.registerLazySingleton(() => crashlyticsErrorReporter);
+}
+```
+
+then modify `lib/bootstrap.dart` file to create dependencies before app run.
+```dart
+Future<void> bootstrap(
+  FutureOr<Widget> Function() builder, {
+  required FirebaseOptions firebaseOptions,
+}) async {
+  Bloc.observer = const AppBlocObserver();
+
+  // Add cross-flavor configuration here
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: firebaseOptions);
+
+  await setupDependencies();
+
+  runApp(await builder());
+}
+```
+
+### Upload dSYM files (iOS)
+iOS needs special dSYM files to decode errors sent to Firebase.
+We need to add Build Phase script that will send dSYM files to Firebase.
+![uplod_dSYM_script](readme_resources/uplod_dSYM_script.png)
+```bash
+"${PODS_ROOT}/FirebaseCrashlytics/upload-symbols" -gsp "${PROJECT_DIR}/flavors/${FLAVOR}/GoogleService-Info.plist" -p ios "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}"
+```
+
+This script uses `FLAVOR` user-defined setting that should be added here:
+![user_defined_flavor](readme_resources/user_defined_flavor.png)
+
+
+
 # Signing the app
 
 ## Android

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:starting_flutter_project/core/crashlytics_error_reporter.dart';
+import 'package:starting_flutter_project/core/dependencies.dart';
 
 import 'package:starting_flutter_project/counter/counter.dart';
 
@@ -11,8 +13,20 @@ import '../../helpers/helpers.dart';
 
 class MockCounterCubit extends MockCubit<int> implements CounterCubit {}
 
+class MockCrashlyticsErrorReporter extends MockCubit<int> implements CrashlyticsErrorReporter {}
+
 void main() {
+  late MockCrashlyticsErrorReporter mockCrashlyticsErrorReporter;
+
   group('CounterPage', () {
+    setUpAll(() {
+      sl.registerLazySingleton<CrashlyticsErrorReporter>(() => mockCrashlyticsErrorReporter);
+    });
+
+    tearDownAll(() {
+      sl.unregister<CrashlyticsErrorReporter>();
+    });
+
     testWidgets('renders CounterView', (tester) async {
       await tester.pumpApp(const CounterPage());
       expect(find.byType(CounterView), findsOneWidget);
@@ -24,6 +38,7 @@ void main() {
 
     setUp(() {
       counterCubit = MockCounterCubit();
+      mockCrashlyticsErrorReporter = MockCrashlyticsErrorReporter();
     });
 
     testWidgets('renders current count', (tester) async {
@@ -38,8 +53,7 @@ void main() {
       expect(find.text('$state'), findsOneWidget);
     });
 
-    testWidgets('calls increment when increment button is tapped',
-        (tester) async {
+    testWidgets('calls increment when increment button is tapped', (tester) async {
       when(() => counterCubit.state).thenReturn(0);
       when(() => counterCubit.increment()).thenReturn(null);
       await tester.pumpApp(
@@ -52,8 +66,7 @@ void main() {
       verify(() => counterCubit.increment()).called(1);
     });
 
-    testWidgets('calls decrement when decrement button is tapped',
-        (tester) async {
+    testWidgets('calls decrement when decrement button is tapped', (tester) async {
       when(() => counterCubit.state).thenReturn(0);
       when(() => counterCubit.decrement()).thenReturn(null);
       await tester.pumpApp(

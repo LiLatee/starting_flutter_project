@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - run: |
+        git fetch --prune --unshallow
     - name: Load common environment variables
       run: |
         source .github/workflows/common.env
@@ -58,7 +60,7 @@ jobs:
         mise exec -- flutter pub get
         mise exec -- dart run build_runner build --delete-conflicting-outputs
 
-    - name: Release App to Firebase App Distribution
+    - name: Release App Google Play Console
       run: |
         cd android
         TAG_NAME=${{ github.ref_name }}

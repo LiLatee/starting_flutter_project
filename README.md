@@ -470,6 +470,11 @@ You can also manage your store listing resources through Fastlane by providing t
 ![google_store_listing_files](readme_resources/google_store_listing_files.png)
 ![google_store_listing](readme_resources/google_store_listing.png)
 
+## Release to App Store Connect
+https://developer.apple.com/account/ios/certificate/
+
+Wyłączyc Automatic manage signing i wybrac provisioning profile recznie
+
 # Firebase
 Check out official documentation
 https://firebase.google.com/docs/flutter/setup

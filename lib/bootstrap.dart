@@ -27,7 +27,6 @@ Future<void> bootstrap(
   required FirebaseOptions firebaseOptions,
 }) async {
   Bloc.observer = const AppBlocObserver();
-
   // Add cross-flavor configuration here
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: firebaseOptions);

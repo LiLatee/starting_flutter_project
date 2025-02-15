@@ -9,14 +9,20 @@ parent_path=$(
 )
 cd "$parent_path/.." || exit
 
+exclude_lib_files=(
+  '**.g.dart'
+  '**.freezed.dart'
+)
 
-exclude_lib_files="'{**.g.dart,**.freezed.dart}'"
+# Join the array into a single string with commas
+exclude_lib_files_str="'{$(IFS=,; echo "${exclude_lib_files[*]}")}'"
+
 exclude_test_files="''"
 commands=(
   "flutter analyze --fatal-infos;Run flutter analyze --fatal-infos"
-  "dart run dart_code_linter:metrics check-unused-files lib --exclude=$exclude_lib_files;Check Unused Files /lib/"
+  "dart run dart_code_linter:metrics check-unused-files lib --exclude=$exclude_lib_files_str;Check Unused Files /lib/"
   "dart run dart_code_linter:metrics check-unused-files test --exclude=$exclude_test_files;Check Unused Test Files /test/"
-  "dart run dart_code_linter:metrics check-unused-code lib --exclude=$exclude_lib_files;Check Unused Code /lib/"
+  "dart run dart_code_linter:metrics check-unused-code lib --exclude=$exclude_lib_files_str;Check Unused Code /lib/"
   "dart run dart_code_linter:metrics check-unused-code test --exclude=$exclude_test_files;Check Unused Code /test/"
   "dart run custom_lint;Check custom lint rules"
 )

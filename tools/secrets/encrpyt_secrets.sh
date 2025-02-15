@@ -61,22 +61,22 @@ echo $file_path
     fi
 done
 
-# # Create a tar archive of all files with the original directory structure, excluding .DS_Store files
-# tar czf - --files-from="$secret_files_list_file" --directory="$(pwd)" --exclude='.DS_Store' | openssl enc -aes-256-cbc -salt -pbkdf2 -out "$output_archive" -pass "file:$password_file"
+# Create a tar archive of all files with the original directory structure, excluding .DS_Store files
+tar czf - --files-from="$secret_files_list_file" --directory="$(pwd)" --exclude='.DS_Store' | openssl enc -aes-256-cbc -salt -pbkdf2 -out "$output_archive" -pass "file:$password_file"
 
-# # Increment the version in secrets_version.txt
-# if [ ! -e "$version_file" ]; then
-#   echo "0" > "$version_file"
-# else
-#   current_version=$(head -n 1 "$version_file")
-#   echo $((current_version + 1)) > "$version_file"
-# fi
+# Increment the version in secrets_version.txt
+if [ ! -e "$version_file" ]; then
+  echo "0" > "$version_file"
+else
+  current_version=$(head -n 1 "$version_file")
+  echo $((current_version + 1)) > "$version_file"
+fi
 
-# # Clear previous content of secrets_version.txt
-# echo -e -n "$(<"$version_file")\n" > "$version_file"
+# Clear previous content of secrets_version.txt
+echo -e -n "$(<"$version_file")\n" > "$version_file"
 
-# # Add the date and current Git user name to secrets_version.txt
-# echo -e "Date of Change: $(date '+%d.%m.%Y %H:%M:%S')" >> "$version_file"
-# echo "Current Git User: $(git config user.name)" >> "$version_file"
+# Add the date and current Git user name to secrets_version.txt
+echo -e "Date of Change: $(date '+%d.%m.%Y %H:%M:%S')" >> "$version_file"
+echo "Current Git User: $(git config user.name)" >> "$version_file"
 
-# echo "Encryption complete. Encrypted archive saved to $output_archive"
+echo "Encryption complete. Encrypted archive saved to $output_archive"

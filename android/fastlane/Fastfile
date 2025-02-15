@@ -43,11 +43,6 @@ Dotenv.load
 platform :android do
 
   lane :upload_to_firebase do |options|
-    # build_android_app action uses default entry point `lib/main.dart`.
-    # Project uses different one depending on flavor.
-    # So here we copy appropriate entry point to the default path.
-    FileUtils.cp(ENV["MAIN_FILE_PATH"], "../../lib/main.dart")
-
     # Set default value if version_name is not provided. e.g.
     # fastlane android upload_to_firebase --env prod version_name:"version name" 
     version_name = options.fetch(:version_name, '1.0.0')
@@ -59,7 +54,8 @@ platform :android do
       properties: { 
         'versionCode' => 1, 
         'versionName' => version_name,
-      }
+      },
+      flags: "-Ptarget=#{ENV["MAIN_FILE_PATH"]}",
     )
     
     firebase_app_distribution(
@@ -83,6 +79,8 @@ platform :android do
 
 
     previous_build_number = google_play_track_version_codes(
+      json_key: ENV["JSON_KEY_PATH"]
+      package_name: ENV["PACKAGE_NAME"]  
       track: "internal",
     )[0]
 
@@ -104,6 +102,8 @@ platform :android do
       # My app on Google Play Console is still a draft one.
       release_status: "draft",
       version_name: version_name,
+      # json_key HALo tutaj zaleznie od flavora plik 
+      # package_name i to tez
       aab: ENV["ANDROID_BUNDLE_PATH"],
     )
   end

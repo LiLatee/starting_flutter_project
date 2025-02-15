@@ -5,6 +5,19 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Launch development with Mise",
+      "request": "launch",
+      "type": "dart",
+      "program": "${workspaceFolder}/run_with_mise.sh",
+      "args": [
+        "lib/main_development.dart",
+        "--flavor",
+        "development",
+        "--target",
+        "lib/main_development.dart"
+      ]
+    },
+    {
       "name": "Launch development",
       "request": "launch",
       "type": "dart",

@@ -1,0 +1,5 @@
+# Automatically check CI goldens as Viewed during code review.
+**/goldens/ci/* -diff
+goldens/ci/* -diff
+goldens/ci/*.png -diff
+test/counter/view/goldens/en/dark/CounterPage.png -diff

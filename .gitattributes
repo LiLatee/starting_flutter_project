@@ -1,0 +1,2 @@
+# Automatically check CI goldens as Viewed during code review.
+**/goldens/ci/* -diff

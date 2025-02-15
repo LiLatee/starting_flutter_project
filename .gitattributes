@@ -3,3 +3,4 @@
 goldens/ci/* -diff
 goldens/ci/*.png -diff
 test/counter/view/goldens/en/dark/CounterPage.png -diff
+lib/counter/view/counter_page.dart -- diff

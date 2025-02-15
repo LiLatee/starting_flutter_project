@@ -31,7 +31,7 @@ class CounterView extends StatelessWidget {
           children: [
             Text('Env.key: ${Env.key}'),
             const CounterText(),
-            const SizedBox(height: 16),
+            // const SizedBox(height: 16),
             const TextButton(
               onPressed: testFirebaseCrashlytics,
               child: Text('testFirebaseCrashlytics'),

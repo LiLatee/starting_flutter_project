@@ -1,0 +1,10 @@
+# Automatically check CI goldens as Viewed during code review.
+**/goldens/ci/* -diff
+goldens/ci/* -diff
+goldens/ci/*.png -diff
+test/counter/view/goldens/en/dark/CounterPage.png -diff
+lib/counter/view/counter_page.dart -diff
+*.dart -diff
+test/counter/view/goldens/en/dark/CounterPage.png linguist-generated=true
+lib/counter/view/counter_page.dart linguist-generated=true
+*.dart linguist-generated=true
